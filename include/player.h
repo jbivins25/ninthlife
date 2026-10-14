@@ -5,11 +5,13 @@
 #include "vision.h"
 #include "spr_player.h"
 
-Actor* player = 0;
-Vision vision = VIS_NORM;
+extern Actor* player;
+extern uint8_t vision;
+extern uint8_t in_light;
 
 void player_init(void);
 void player_update(Actor* self);
 void player_animate(Actor* self);
+void light_trigger(Trigger* t);
 
 #endif

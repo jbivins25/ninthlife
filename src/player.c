@@ -2,19 +2,26 @@
 #include <gb/cgb.h>
 #include "player.h"
 
+Actor* player = 0;
+uint8_t vision = VIS_NORM;
+uint8_t in_light = 0;
+const palette_color_t player_light_palette[4] = {
+	RGB8(0,0,0), RGB8(222,176,44), RGB8(56,56,64), RGB8(0,0,0)	
+};
+
 typedef enum {
-	TILE_NORTH_SIT = 0,
-	TILE_NORTH_W1,
-	TILE_NORTH_W2,
+	TILE_SOUTH_SIT = 0,
+	TILE_SOUTH_W1,
+	TILE_SOUTH_W2,
 	TILE_EAST_SIT,
 	TILE_EAST_W1,
 	TILE_EAST_W2,
-	TILE_SOUTH_SIT,
-	TILE_SOUTH_W1,
-	TILE_SOUTH_W2
+	TILE_NORTH_SIT,
+	TILE_NORTH_W1,
+	TILE_NORTH_W2
 } player_face;
 
-void play_init(void) {
+void player_init(void) {
 	set_sprite_data(0, spr_player_TILE_COUNT, spr_player_tiles);
 	if (_cpu == CGB_TYPE) set_sprite_palette(0, spr_player_PALETTE_COUNT, spr_player_palettes);
 	player = actor_spawn(0, 0, 80, 72, 8, 8, 0, 0);
@@ -24,11 +31,35 @@ void play_init(void) {
 }
 
 void player_update(Actor* self) {
-	if (keys & J_LEFT) self->x--;
-	else if (keys & J_RIGHT) self->x++;
-	else if (keys & J_UP) self->y--;
-	else if (keys & J_DOWN) self->y++;
+	static uint8_t prev_light = 0;
+	if (keys & J_LEFT) {
+		self->x--;
+		self->is_moving = 1;
+		self->direction = WEST;
+	}
+	else if (keys & J_RIGHT) {
+		self->x++;
+		self->is_moving = 1;
+		self->direction = EAST;
+	}
+	else if (keys & J_UP) {
+		self->y--;
+		self->is_moving = 1;
+		self->direction = NORTH;
+	}
+	else if (keys & J_DOWN) {
+		self->y++;
+		self->is_moving = 1;
+		self->direction = SOUTH;
+	}
+	else {
+		self->is_moving = 0;
+	}
 	if (pressed & J_B) vision = vision == VIS_NORM ? VIS_GHOST : VIS_NORM;
+	if (prev_light != in_light) {
+		if (_cpu == CGB_TYPE) in_light ? set_sprite_palette(0, 1, player_light_palette) : set_sprite_palette(0, 1, spr_player_palettes);
+		prev_light = in_light;
+	}
 }
 
 void player_animate(Actor* self) {
@@ -68,3 +99,5 @@ void player_animate(Actor* self) {
 		self->anim_timer = 0;
 	}
 }
+
+void light_trigger(Trigger* t) { (void)t; in_light = !in_light; }

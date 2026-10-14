@@ -1,7 +1,7 @@
 #include "gb_basics.h"
+#include "player.h"
 
 static Actor actors[MAX_ACTORS];
-Actor* player = 0;
 
 Actor* actor_spawn(uint8_t tile, uint8_t palette, int16_t x, int16_t y, uint8_t w, uint8_t h, uint8_t is_moving, uint8_t direction) {
 	for (uint8_t i = 0; i < MAX_ACTORS; i++) {
@@ -39,7 +39,7 @@ void actors_clear(void) {
 void actors_update(void) {
 	for (uint8_t i = 0; i < MAX_ACTORS; i++) {
 		if (actors[i].active && actors[i].update) actors[i].update(&actors[i]);
-		if (actors[i].active && actors[i].is_moving && actors[i].animate) actors[i].animate(&actors[i]);
+		if (actors[i].active && actors[i].animate) actors[i].animate(&actors[i]);
 	}
 }
 

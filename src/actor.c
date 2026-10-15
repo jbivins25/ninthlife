@@ -45,7 +45,7 @@ void actors_update(void) {
 
 void actors_draw(void) {
 	for (uint8_t i = 0; i < MAX_ACTORS; i++) {
-		if (actors[i].active) move_sprite(i, actors[i].x + 8, actors[i].y + 16);
+		if (actors[i].active) move_sprite(i, actors[i].x+8, actors[i].y+16);
 	}
 }
 

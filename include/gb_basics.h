@@ -3,9 +3,6 @@
 #include <gb/gb.h>
 #include <stdint.h>
 
-//Game state
-typedef enum { STATE_TITLE, STATE_PLAY, STATE_GAMEOVER } GameState;
-
 //Actors
 #define MAX_ACTORS 16
 

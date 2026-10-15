@@ -1,6 +1,7 @@
 #include <gb/gb.h>
 #include <gb/cgb.h>
 #include "player.h"
+#include "level.h"
 
 Actor* player = 0;
 uint8_t vision = VIS_NORM;
@@ -24,7 +25,7 @@ typedef enum {
 void player_init(void) {
 	set_sprite_data(0, spr_player_TILE_COUNT, spr_player_tiles);
 	if (_cpu == CGB_TYPE) set_sprite_palette(0, spr_player_PALETTE_COUNT, spr_player_palettes);
-	player = actor_spawn(0, 0, 80, 72, 8, 8, 0, 0);
+	player = actor_spawn(0, 0, 80, 72, 8, 7, 0, 0);
 	player->update = player_update;
 	player->animate = player_animate;
 	vision = VIS_NORM;
@@ -32,29 +33,32 @@ void player_init(void) {
 
 void player_update(Actor* self) {
 	static uint8_t prev_light = 0;
+	int16_t nx = self->x, ny = self->y;
 	if (keys & J_LEFT) {
-		self->x--;
+		nx--;
 		self->is_moving = 1;
 		self->direction = WEST;
 	}
 	else if (keys & J_RIGHT) {
-		self->x++;
+		nx++;
 		self->is_moving = 1;
 		self->direction = EAST;
 	}
 	else if (keys & J_UP) {
-		self->y--;
+		ny--;
 		self->is_moving = 1;
 		self->direction = NORTH;
 	}
 	else if (keys & J_DOWN) {
-		self->y++;
+		ny++;
 		self->is_moving = 1;
 		self->direction = SOUTH;
 	}
 	else {
 		self->is_moving = 0;
 	}
+	if (!level_blocked(nx, self->y, self->w, self->h)) self->x = nx;
+	if (!level_blocked(self->x, ny, self->w, self->h)) self->y = ny;
 	if (pressed & J_B) vision = vision == VIS_NORM ? VIS_GHOST : VIS_NORM;
 	if (prev_light != in_light) {
 		if (_cpu == CGB_TYPE) in_light ? set_sprite_palette(0, 1, player_light_palette) : set_sprite_palette(0, 1, spr_player_palettes);

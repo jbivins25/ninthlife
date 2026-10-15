@@ -6,6 +6,7 @@
 #include "player.h"
 #include "mansion_entryway.h"
 #include "vision.h"
+#include "cm_entryway.h"
 
 void entryway_init(void) {
 	cls();
@@ -19,6 +20,9 @@ void entryway_init(void) {
 	}
 
 	set_bkg_tiles(0, 0, bkg_entryway_MAP_ATTRIBUTES_WIDTH, bkg_entryway_MAP_ATTRIBUTES_HEIGHT, bkg_entryway_map);
+	curr_level.w = cm_entryway_WIDTH;
+	curr_level.h = cm_entryway_HEIGHT;
+	curr_level.map = (uint8_t*)cm_entryway_map;
 	SHOW_BKG;
 	player_init();
 	quad_points points;
